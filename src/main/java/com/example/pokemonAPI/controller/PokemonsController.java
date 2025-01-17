@@ -31,8 +31,22 @@ public class PokemonsController {
         return pokemonsRepository.save(pokemon);
     }
 
-    /*@PutMapping("{id}")
-    public Pokemons updatePokemon(@PathVariable Long id, @RequestBody Pokemons pokemon){
-    }*/
+
+    @PutMapping("{id}")
+    public Pokemons updatePokemon(@PathVariable Long id,@RequestBody Pokemons updatePokemon ){
+        return pokemonsRepository.findById(id).map(pokemon -> {
+            pokemon.setName(updatePokemon.getName());
+            pokemon.setType(updatePokemon.getType());
+            pokemon.setImageUrl(updatePokemon.getImageUrl());
+            return pokemonsRepository.save(pokemon);
+        })
+                .orElseThrow(() -> new RuntimeException("Pokemon não encontrado"));
+    }
+
+    @DeleteMapping("{id}")
+    public String deletePokemon(@PathVariable Long id){
+        pokemonsRepository.deleteById(id);
+        return "Pokemon deletado com sucesso";
+    }
 
 }
