@@ -1,7 +1,7 @@
 package com.example.pokemonAPI.controller;
 
 import com.example.pokemonAPI.model.Pokemons;
-import com.example.pokemonAPI.repository.PokemonsRepository;
+import com.example.pokemonAPI.services.PokemonServices;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,43 +10,43 @@ import java.util.List;
 @RequestMapping("/pokemons")
 public class PokemonsController {
 
-    private final PokemonsRepository pokemonsRepository;
-    public PokemonsController(PokemonsRepository pokemonsRepository) {
-        this.pokemonsRepository = pokemonsRepository;
+
+    private final PokemonServices pokemonServices;
+
+    public PokemonsController(PokemonServices pokemonServices) {
+        this.pokemonServices = pokemonServices;
     }
 
     @GetMapping
     public List<Pokemons> getAllPokemons() {
-        return pokemonsRepository.findAll();
+        return pokemonServices.getAllPokemons();
+    }
+    @GetMapping("{id}")
+    public Pokemons getPokemonById(@PathVariable Long id) {
+        return pokemonServices.getPokemonById(id);
     }
 
-    @GetMapping("{id}")
-    public Pokemons getPokemonsById(@PathVariable Long id){
-        return pokemonsRepository.findById(id).orElseThrow(()-> new RuntimeException("Pokémon não encontrado"));
-
+    @GetMapping("/search")
+    public Pokemons getPokemonByName(@RequestParam String name) {
+        return pokemonServices.getPokemonsByName(name);
     }
 
     @PostMapping
-    public Pokemons savePokemon(@RequestBody Pokemons pokemon){
-        return pokemonsRepository.save(pokemon);
-    }
-
-
-    @PutMapping("{id}")
-    public Pokemons updatePokemon(@PathVariable Long id,@RequestBody Pokemons updatePokemon ){
-        return pokemonsRepository.findById(id).map(pokemon -> {
-            pokemon.setName(updatePokemon.getName());
-            pokemon.setType(updatePokemon.getType());
-            pokemon.setImageUrl(updatePokemon.getImageUrl());
-            return pokemonsRepository.save(pokemon);
-        })
-                .orElseThrow(() -> new RuntimeException("Pokemon não encontrado"));
+    public Pokemons savePokemon(@RequestBody Pokemons pokemon) {
+        return pokemonServices.addPokemons(pokemon);
     }
 
     @DeleteMapping("{id}")
-    public String deletePokemon(@PathVariable Long id){
-        pokemonsRepository.deleteById(id);
-        return "Pokemon deletado com sucesso";
+    public String deletePokemonById(@PathVariable Long id) {
+         pokemonServices.deletePokemonsById(id);
+         return "Pokemon deletado com sucesso!";
     }
+
+    @PutMapping("{id}")
+    public Pokemons updatePokemonById(@PathVariable Long id, @RequestBody Pokemons pokemon) {
+        return pokemonServices.updatePokemons(id, pokemon);
+    }
+
+
 
 }

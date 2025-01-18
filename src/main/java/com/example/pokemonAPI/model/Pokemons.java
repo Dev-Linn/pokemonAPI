@@ -21,6 +21,7 @@ public class Pokemons implements Serializable {
     @Column(name = "imageUrl")
     private String imageUrl;
 
+
     public Pokemons() {
 
     }
@@ -63,6 +64,8 @@ public class Pokemons implements Serializable {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
